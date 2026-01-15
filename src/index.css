@@ -1,0 +1,342 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 导入字体 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+/* 日麻直播记分系统设计系统 */
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  @keyframes scoreDelta {
+    0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+    20% { opacity: 1; transform: translateY(0) scale(1); }
+    80% { opacity: 1; transform: translateY(-6px) }
+    100% { opacity: 0; transform: translateY(-12px); }
+  }
+  .animate-score-delta { animation: scoreDelta 2.2s ease-in-out; }
+  @keyframes riichiFlash {
+    0% { transform: scale(0.95); opacity: 0; }
+    20% { transform: scale(1.02); opacity: 1; }
+    80% { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1.1); opacity: 0; }
+  }
+  .riichi-flash {
+    background: radial-gradient(circle at 50% 50%, rgba(255,140,0,0.9), rgba(255,0,0,0.8));
+    box-shadow: 0 0 40px rgba(255,120,0,0.8);
+    animation: riichiFlash 1.6s ease-in-out;
+  }
+  
+  @keyframes riichiGlow {
+    0%, 100% { 
+      box-shadow: 0 0 10px rgba(255,0,0,0.5), 0 0 20px rgba(255,100,0,0.3);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba(255,0,0,0.8), 0 0 40px rgba(255,100,0,0.6);
+    }
+  }
+  
+  @keyframes riichiBorder {
+    0%, 100% { 
+      border-color: rgba(255,0,0,0.5);
+      opacity: 0.6;
+    }
+    50% { 
+      border-color: rgba(255,0,0,1);
+      opacity: 1;
+    }
+  }
+  
+  .riichi-effect {
+    animation: riichiGlow 2s ease-in-out infinite, riichiBorder 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes fade-in-out {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    10% { opacity: 1; transform: translate(-50%, 0); }
+    90% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
+  }
+  
+  .animate-fade-in-out {
+    animation: fade-in-out 3s ease-in-out;
+  }
+
+  /* 全屏立直动画 - 适配OBS绿色抠像 */
+  @keyframes riichi-fullscreen-bg {
+    0% { 
+      opacity: 0;
+    }
+    8% { 
+      opacity: 1;
+    }
+    75% { 
+      opacity: 1;
+    }
+    90% { 
+      opacity: 0.8;
+    }
+    100% { 
+      opacity: 0;
+    }
+  }
+
+  @keyframes riichi-fullscreen-scale {
+    0% { 
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
+      filter: blur(20px);
+    }
+    8% {
+      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+      filter: blur(5px);
+    }
+    15% { 
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      filter: blur(0px);
+    }
+    20% {
+      transform: translate(-50%, -50%) scale(1.05) rotate(0deg);
+      filter: blur(0px);
+    }
+    25% {
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      filter: blur(0px);
+    }
+    70% { 
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      filter: blur(0px);
+    }
+    85% {
+      opacity: 0.95;
+      transform: translate(-50%, -50%) scale(0.99) rotate(0deg);
+      filter: blur(1px);
+    }
+    95% {
+      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(0.98) rotate(0deg);
+      filter: blur(3px);
+    }
+    100% { 
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9) rotate(0deg);
+      filter: blur(5px);
+    }
+  }
+
+  @keyframes riichi-text-reveal {
+    0% { 
+      opacity: 0;
+      transform: translateY(30px) scale(0.8) rotateX(90deg);
+      filter: blur(10px);
+    }
+    12% {
+      opacity: 0.7;
+      transform: translateY(10px) scale(1.1) rotateX(0deg);
+      filter: blur(3px);
+    }
+    20% { 
+      opacity: 1;
+      transform: translateY(0) scale(1) rotateX(0deg);
+      filter: blur(0px);
+    }
+    25% {
+      transform: translateY(-3px) scale(1.05) rotateX(0deg);
+      filter: blur(0px);
+    }
+    30% {
+      transform: translateY(0) scale(1) rotateX(0deg);
+      filter: blur(0px);
+    }
+    70% { 
+      opacity: 1;
+      transform: translateY(0) scale(1) rotateX(0deg);
+      filter: blur(0px);
+    }
+    85% {
+      opacity: 0.95;
+      transform: translateY(-3px) scale(0.99) rotateX(0deg);
+      filter: blur(1px);
+    }
+    92% {
+      opacity: 0.8;
+      transform: translateY(-5px) scale(0.98) rotateX(0deg);
+      filter: blur(3px);
+    }
+    100% { 
+      opacity: 0;
+      transform: translateY(-15px) scale(0.9) rotateX(-10deg);
+      filter: blur(5px);
+    }
+  }
+
+  @keyframes riichi-glow-subtle {
+    0%, 100% { 
+      opacity: 0.6;
+    }
+    50% { 
+      opacity: 1;
+    }
+  }
+
+  @keyframes riichi-line-expand {
+    0% { 
+      width: 0;
+      opacity: 0;
+    }
+    20% { 
+      width: 100%;
+      opacity: 1;
+    }
+    80% { 
+      width: 100%;
+      opacity: 1;
+    }
+    100% { 
+      width: 0;
+      opacity: 0;
+    }
+  }
+
+  .animate-riichi-fullscreen-bg {
+    animation: riichi-fullscreen-bg 4.5s ease-out;
+    will-change: opacity;
+  }
+
+  .animate-riichi-fullscreen-scale {
+    animation: riichi-fullscreen-scale 4.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  .animate-riichi-text-reveal {
+    animation: riichi-text-reveal 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  .animate-riichi-glow-subtle {
+    animation: riichi-glow-subtle 2s ease-in-out infinite;
+  }
+
+  .animate-riichi-line-expand {
+    animation: riichi-line-expand 2.5s ease-out;
+  }
+  
+  /* 电竞直播风格字体 */
+  .display-score {
+    font-family: 'Inter', 'SF Pro Display', 'Roboto Mono', 'Consolas', 'Monaco', 'Courier New', monospace, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+  
+  .display-name {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei Bold', '微软雅黑 Bold', 'PingFang SC Bold', 'Hiragino Sans GB', sans-serif;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+}
