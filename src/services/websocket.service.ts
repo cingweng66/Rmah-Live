@@ -1,7 +1,27 @@
 import { io, Socket } from 'socket.io-client';
 import { GameState } from '../types/game';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+// 自动检测协议：如果 VITE_WS_URL 未设置，从 VITE_API_URL 推断，或使用默认值
+const getWebSocketUrl = () => {
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL;
+  }
+  // 如果设置了 API URL，自动转换为 WebSocket URL
+  if (import.meta.env.VITE_API_URL) {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    // 将 http:// 转换为 ws://，https:// 转换为 wss://
+    if (apiUrl.startsWith('https://')) {
+      return apiUrl.replace('https://', 'wss://');
+    } else if (apiUrl.startsWith('http://')) {
+      return apiUrl.replace('http://', 'ws://');
+    }
+    return apiUrl; // 如果已经包含协议，直接返回
+  }
+  // 默认值使用 ws:// 协议
+  return 'ws://localhost:3000';
+};
+
+const WS_URL = getWebSocketUrl();
 
 class WebSocketService {
   private socket: Socket | null = null;

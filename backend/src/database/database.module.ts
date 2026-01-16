@@ -14,6 +14,10 @@ import { GameState } from '../game/entities/game-state.entity';
       useFactory: (configService: ConfigService) => {
         const dbHost = configService.get('DB_HOST', 'localhost');
         const isAzurePostgres = dbHost.includes('.postgres.database.azure.com');
+        const isZeaburPostgres = dbHost.includes('.zeabur.app') || dbHost.includes('.zeabur.com');
+        const nodeEnv = configService.get('NODE_ENV', 'development');
+        // 允许通过环境变量强制启用 synchronize（用于 Zeabur 等云平台首次部署）
+        const forceSynchronize = configService.get('DB_SYNCHRONIZE', 'false') === 'true';
         
         const dbConfig = {
           type: 'postgres' as const,
@@ -23,27 +27,34 @@ import { GameState } from '../game/entities/game-state.entity';
           password: configService.get('DB_PASSWORD', 'postgres'),
           database: configService.get('DB_DATABASE', 'mahjong_db'),
           entities: [User, License, RegistrationCode, GameSession, GameState],
-          synchronize: configService.get('NODE_ENV') !== 'production', // 生产环境设为 false
-          logging: configService.get('NODE_ENV') === 'development',
+          // 生产环境默认关闭 synchronize，但可以通过 DB_SYNCHRONIZE=true 强制启用
+          synchronize: nodeEnv !== 'production' || forceSynchronize,
+          logging: nodeEnv === 'development',
           // 连接重试配置
           retryAttempts: 3,
           retryDelay: 3000,
-          // Azure PostgreSQL 需要 SSL
         };
         
-        if (isAzurePostgres) {
-          // Azure PostgreSQL SSL 配置
+        // 云数据库（Azure 或 Zeabur）需要 SSL
+        if (isAzurePostgres || isZeaburPostgres) {
+          // 云 PostgreSQL SSL 配置
           dbConfig['ssl'] = {
-            rejectUnauthorized: false, // Azure 使用自签名证书
+            rejectUnauthorized: false, // 云服务使用自签名证书
           };
           dbConfig['extra'] = {
             ssl: {
               rejectUnauthorized: false,
             },
           };
-          console.log(`🔌 配置 Azure PostgreSQL 连接: ${dbHost} (SSL enabled)`);
+          const provider = isAzurePostgres ? 'Azure' : 'Zeabur';
+          console.log(`🔌 配置 ${provider} PostgreSQL 连接: ${dbHost} (SSL enabled)`);
         } else {
           console.log(`🔌 配置本地 PostgreSQL 连接: ${dbHost}`);
+        }
+        
+        if (forceSynchronize && nodeEnv === 'production') {
+          console.warn('⚠️  警告: 在生产环境启用了数据库自动同步 (DB_SYNCHRONIZE=true)');
+          console.warn('   建议在生产环境使用数据库迁移而不是自动同步');
         }
         
         return dbConfig;
